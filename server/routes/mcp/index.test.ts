@@ -190,7 +190,7 @@ describe("POST /mcp/", () => {
       });
 
       const res = await callMcpTool(server, accessToken, "fetch", {
-        type: "collection",
+        resource: "collection",
         id: collection.id,
       });
 
@@ -499,7 +499,7 @@ describe("POST /mcp/", () => {
       });
 
       const res = await callMcpTool(server, accessToken, "fetch", {
-        type: "document",
+        resource: "document",
         id: document.id,
       });
 

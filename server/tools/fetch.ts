@@ -58,7 +58,7 @@ export function fetchTool(server: McpServer, scopes: string[]) {
         readOnlyHint: true,
       },
       inputSchema: {
-        type: z.enum(allowedTypes).describe("The type of resource to fetch."),
+        resource: z.enum(allowedTypes).describe("The resource to fetch."),
         id: z
           .string()
           .describe(
@@ -66,11 +66,11 @@ export function fetchTool(server: McpServer, scopes: string[]) {
           ),
       },
     },
-    withTracing("fetch", async ({ type, id }, extra) => {
+    withTracing("fetch", async ({ resource, id }, extra) => {
       try {
         const actor = getActorFromContext(extra);
 
-        switch (type) {
+        switch (resource) {
           case "document": {
             const document = await Document.findByPk(id, {
               userId: actor.id,
@@ -133,7 +133,7 @@ export function fetchTool(server: McpServer, scopes: string[]) {
           }
 
           default:
-            return error(`Unknown type: ${type}`);
+            return error(`Unknown resource: ${resource}`);
         }
       } catch (message) {
         return error(message);
