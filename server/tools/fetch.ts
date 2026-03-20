@@ -20,6 +20,27 @@ import {
 const SELF_TOKENS = new Set(["self", "me", "current_user"]);
 
 /**
+ * Extracts a resource identifier from a value that may be a URL or a plain ID.
+ * When a URL is detected the last non-empty path segment is returned as the
+ * slug, which the model's findByPk override can resolve.
+ *
+ * @param value - a URL string or plain identifier.
+ * @returns the extracted identifier.
+ */
+function extractId(value: string): string {
+  if (/^https?:\/\//.test(value)) {
+    try {
+      const pathname = new URL(value).pathname;
+      const segments = pathname.split("/").filter(Boolean);
+      return segments[segments.length - 1] ?? value;
+    } catch {
+      return value;
+    }
+  }
+  return value;
+}
+
+/**
  * Registers the unified "fetch" MCP tool on the given server. The tool is
  * only registered when at least one of the underlying info scopes is granted.
  *
@@ -62,13 +83,14 @@ export function fetchTool(server: McpServer, scopes: string[]) {
         id: z
           .string()
           .describe(
-            'The unique identifier. For users, "current_user" returns the authenticated user.'
+            'The unique identifier or URL. For users, "current_user" returns the authenticated user.'
           ),
       },
     },
-    withTracing("fetch", async ({ resource, id }, extra) => {
+    withTracing("fetch", async ({ resource, id: rawId }, extra) => {
       try {
         const actor = getActorFromContext(extra);
+        const id = extractId(rawId);
 
         switch (resource) {
           case "document": {
