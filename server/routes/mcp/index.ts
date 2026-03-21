@@ -35,12 +35,12 @@ function createMcpServer(scopes: string[], instructions?: string): McpServer {
     {
       name: "outline",
       version,
-      ...(instructions ? { instructions } : {}),
     },
     {
       capabilities: {
         tools: {},
       },
+      ...(instructions ? { instructions } : {}),
     }
   );
 

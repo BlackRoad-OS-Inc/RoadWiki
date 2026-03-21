@@ -59,6 +59,7 @@ function Features() {
       <SettingRow
         name={TeamPreference.MCP}
         label={t("MCP server")}
+        border={!team.getPreference(TeamPreference.MCP)}
         description={
           <>
             <Text type="secondary" as="p">
@@ -97,17 +98,6 @@ function Features() {
                     </CopyToClipboard>
                   </Tooltip>
                 </Input>
-                <Input
-                  type="textarea"
-                  label={t("Workspace guidance")}
-                  value={team.guidanceMCP ?? ""}
-                  maxLength={TeamValidation.maxGuidanceMCPLength}
-                  placeholder={t(
-                    "Optional instructions provided to MCP clients when they connect…"
-                  )}
-                  onChange={handleGuidanceMCPChange}
-                  onBlur={handleGuidanceMCPBlur}
-                />
               </>
             )}
           </>
@@ -120,6 +110,31 @@ function Features() {
           onChange={handleMCPChange}
         />
       </SettingRow>
+
+      {team.getPreference(TeamPreference.MCP) && (
+        <SettingRow
+          name="guidanceMCP"
+          label={t("Additional guidance")}
+          description={
+            <>
+              <div style={{ marginBottom: 8 }}>
+                {t(
+                  "You can use these optional instructions to tell MCP clients how to use your knowledge base."
+                )}
+              </div>
+              <Input
+                id="guidanceMCP"
+                type="textarea"
+                rows={6}
+                value={team.guidanceMCP ?? ""}
+                maxLength={TeamValidation.maxGuidanceMCPLength}
+                onChange={handleGuidanceMCPChange}
+                onBlur={handleGuidanceMCPBlur}
+              />
+            </>
+          }
+        />
+      )}
 
       <SettingRow
         name="answers"
