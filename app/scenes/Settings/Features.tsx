@@ -4,6 +4,7 @@ import * as React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { toast } from "sonner";
 import { TeamPreference } from "@shared/types";
+import { TeamValidation } from "@shared/validations";
 import Heading from "~/components/Heading";
 import Scene from "~/components/Scene";
 import Switch from "~/components/Switch";
@@ -29,6 +30,18 @@ function Features() {
     },
     [team, t]
   );
+
+  const handleGuidanceMCPChange = React.useCallback(
+    async (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
+      team.guidanceMCP = ev.target.value || null;
+    },
+    [team]
+  );
+
+  const handleGuidanceMCPBlur = React.useCallback(async () => {
+    await team.save();
+    toast.success(t("Settings saved"));
+  }, [team, t]);
 
   const handleCopied = React.useCallback(() => {
     toast.success(t("Copied to clipboard"));
@@ -84,6 +97,17 @@ function Features() {
                     </CopyToClipboard>
                   </Tooltip>
                 </Input>
+                <Input
+                  type="textarea"
+                  label={t("Workspace guidance")}
+                  value={team.guidanceMCP ?? ""}
+                  maxLength={TeamValidation.maxGuidanceMCPLength}
+                  placeholder={t(
+                    "Optional instructions provided to MCP clients when they connect…"
+                  )}
+                  onChange={handleGuidanceMCPChange}
+                  onBlur={handleGuidanceMCPBlur}
+                />
               </>
             )}
           </>
